@@ -5,8 +5,8 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-@Repository
-public class CustomerDataAccessService implements CustomerDao{
+@Repository("list")
+public class CustomerListDataAccessService implements CustomerDao{
     //    Fake bd initial one
     private static List<Customer> customers;
     static {
@@ -18,13 +18,13 @@ public class CustomerDataAccessService implements CustomerDao{
                 23
         );
         customers.add(dev);
-        Customer Keya = new Customer(
+        Customer keya = new Customer(
                 2,
                 "Keya",
                 "Keya@gmail.com",
                 20
         );
-        customers.add(Keya);
+        customers.add(keya);
     }
     @Override
     public List<Customer> selectAllCustomers() {
@@ -38,5 +38,16 @@ public class CustomerDataAccessService implements CustomerDao{
                 .filter(c -> c.getId().equals(id))
                 .findFirst();
 
+    }
+
+    @Override
+    public void insertCustomer(Customer customer) {
+        customers.add(customer);
+    }
+
+    @Override
+    public boolean existPersonWithEmail(String email) {
+        return customers.stream()
+                .anyMatch(c -> c.getEmail().equals(email));
     }
 }

@@ -1,6 +1,8 @@
 package com.pateldev.spring.customer;
 
-import com.pateldev.spring.exception.ResourceNotFound;
+import com.pateldev.spring.exception.DuplicateResourceException;
+import com.pateldev.spring.exception.ResourceNotFoundException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -8,8 +10,8 @@ import java.util.List;
 public class CustomerService {
 // Business layer
     private final CustomerDao customerDao;
-
-    public CustomerService(CustomerDao customerDao) {
+// Qualifier will help to know which on inject jpa, list, jdbc
+    public CustomerService(@Qualifier("jpa") CustomerDao customerDao) {
         this.customerDao = customerDao;
     }
 
@@ -19,8 +21,22 @@ public class CustomerService {
 public Customer getcustomer(Integer id){
         return customerDao.selectCustomerById(id)
                 .orElseThrow(
-                        () -> new ResourceNotFound("Customer with id [%s] not found".formatted(id))
+                        () -> new ResourceNotFoundException("Customer with id [%s] not found".formatted(id))
                 );
     }
+    public void addCustomer(CustomerRegistrationRequest customerRegistrationRequest){
+        //check if email exists
+        String email = customerRegistrationRequest.email();
+        if(customerDao.existPersonWithEmail(email)){
+            throw new DuplicateResourceException("Email already taken");
+        }
+        Customer customer = new Customer(
+                customerRegistrationRequest.name(),
+                customerRegistrationRequest.email(),
+                customerRegistrationRequest.age()
+        );
+        customerDao.insertCustomer(customer);
+    }
+
 
 }

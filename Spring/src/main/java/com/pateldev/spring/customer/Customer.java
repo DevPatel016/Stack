@@ -1,18 +1,37 @@
 package com.pateldev.spring.customer;
 
 import com.pateldev.spring.Application;
+import jakarta.persistence.*;
 
 import java.util.Objects;
-
+@Entity //JPA
 public class Customer{
+    @Id //JPA
+    @SequenceGenerator(  //JPA
+            name = "customer_id_sequence",
+            sequenceName = "customer_id_sequence"
+    )
+    @GeneratedValue( //JPA
+            strategy = GenerationType.SEQUENCE,
+            generator = "customer_id_sequence"
+    )
     private Integer id;
+    @Column(nullable = false) //JPA
     private String name;
+    @Column(nullable = false) //JPA
     private String email;
+    @Column(nullable = false) //JPA
     private Integer age;
+
     public Customer(){}
 
     public Customer(Integer id, String name, String email, Integer age) {
         this.id = id;
+        this.name = name;
+        this.email = email;
+        this.age = age;
+    }
+    public Customer( String name, String email, Integer age) {
         this.name = name;
         this.email = email;
         this.age = age;
