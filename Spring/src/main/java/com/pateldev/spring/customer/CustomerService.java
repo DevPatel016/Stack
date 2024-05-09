@@ -35,8 +35,14 @@ public Customer getcustomer(Integer id){
                 customerRegistrationRequest.email(),
                 customerRegistrationRequest.age()
         );
-        customerDao.insertCustomer(customer);
+        customerDao.insertCustomer(customer); // this line connects with the JPA SQL
     }
 
+    public void deleteCustomerById(Integer customerId){
+        if (!customerDao.existsPersonWithId(customerId)){
+            throw new ResourceNotFoundException("Id does not exit");
+        }
+        customerDao.deleteCustomerById(customerId);
 
+    }
 }
