@@ -10,4 +10,8 @@ public interface CustomerDao {
     boolean existPersonWithEmail(String email);
     boolean existsPersonWithId(Integer id);
     void deleteCustomerById(Integer customerId);
+    boolean existPersonWithAge(Integer age);
+    boolean existPersonWithName(String name);
+
+    void updateCustomer(Customer update);
 }

@@ -1,6 +1,7 @@
 package com.pateldev.spring.customer;
 
 import com.pateldev.spring.exception.DuplicateResourceException;
+import com.pateldev.spring.exception.RequestValidationException;
 import com.pateldev.spring.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -43,6 +44,33 @@ public Customer getcustomer(Integer id){
             throw new ResourceNotFoundException("Id does not exit");
         }
         customerDao.deleteCustomerById(customerId);
+
+    }
+    public void updateCustomer ( Integer customerId, CustomerUpdateRequest updateRequest){
+        Customer customer = getcustomer(customerId);
+        boolean changes = false;
+        if (updateRequest.name() != null && !updateRequest.name().equals(customer.getName())){
+            customer.setName(updateRequest.name());
+
+            changes = true;
+        }
+
+if (updateRequest.age() != null && !updateRequest.age().equals(customer.getAge())){
+            customer.setAge(updateRequest.age());
+
+            changes = true;
+        }
+       if (updateRequest.email() != null && !updateRequest.email().equals(customer.getEmail())){
+            if (customerDao.existPersonWithEmail(updateRequest.email())){
+                throw new DuplicateResourceException("Email already taken");
+            }
+            customer.setEmail(updateRequest.email());
+            changes = true;
+        }
+       if (!changes){
+           throw new RequestValidationException("no data change found");
+       }
+       customerDao.updateCustomer(customer);
 
     }
 }
